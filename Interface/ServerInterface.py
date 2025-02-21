@@ -1,6 +1,9 @@
 # coding:utf-8
 #服务器端界面
+import time
+
 import wx
+from socket import socket,AF_INET,SOCK_STREAM
 class ServerInterface(wx.Frame):
     def __init__(self):
         #调用父类的初始化方法
@@ -32,6 +35,20 @@ class ServerInterface(wx.Frame):
         box.Add(self.show_text,1,wx.ALIGN_CENTER)
 
         pl.SetSizer(box)
+
+        """设置服务器属性"""
+        self.isOn=False#存储服务器启动状态
+        self.host_port=('',8888)#空字符串代表所有本机IP
+        self.server_socket=socket(AF_INET,SOCK_STREAM)#创建socket对象
+        self.server_socket.bind(self.host_port)#绑定IP地址和端口
+        self.server_socket.listen(5)#监听
+        self.session_thread_dict={}#存储客户端对话和会话线程的字典
+
+        #绑定鼠标事件
+        self.Bind(wx.EVT_BUTTON,self.start_server,start_server_btn)
+
+    def start_server(self,event):
+        print("服务器启动")
 
 if __name__ =='__main__':
     app=wx.App()
